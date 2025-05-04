@@ -15,7 +15,6 @@ import com.example.project_kotlin.dao.ComprobanteDao
 import com.example.project_kotlin.dao.MetodoPagoDao
 import com.example.project_kotlin.db.ComandaDatabase
 import com.example.project_kotlin.entidades.MetodoPago
-import com.example.project_kotlin.entidades.firebase.MetodoPagoNoSql
 import com.example.project_kotlin.service.ApiServiceMetodoPago
 import com.example.project_kotlin.utils.ApiUtils
 import com.example.project_kotlin.utils.appConfig
@@ -153,11 +152,6 @@ class ActualizarMetodoPago : AppCompatActivity() {
                 metodoPagoBean.nombreMetodoPago = nuevoNombre
                     EditarMySql(metodoPagoBean)
                     metodoPagoDao.actualizar(metodoPagoBean)
-
-
-
-                    val beanNoSql= MetodoPagoNoSql(metodoPagoBean.nombreMetodoPago)
-                    bd.child("metodopago").child(metodoPagoBean.id.toString()).setValue(beanNoSql)
 
                     mostrarToast("Método de pago actualizado correctamente")
                     volver()

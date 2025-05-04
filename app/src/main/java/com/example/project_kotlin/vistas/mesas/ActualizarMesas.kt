@@ -14,7 +14,6 @@ import com.example.project_kotlin.dao.ComandaDao
 import com.example.project_kotlin.dao.MesaDao
 import com.example.project_kotlin.db.ComandaDatabase
 import com.example.project_kotlin.entidades.Mesa
-import com.example.project_kotlin.entidades.firebase.MesaNoSql
 import com.example.project_kotlin.service.ApiServiceMesa
 import com.example.project_kotlin.utils.ApiUtils
 import com.example.project_kotlin.utils.appConfig
@@ -84,7 +83,6 @@ class ActualizarMesas : AppCompatActivity() {
                 if (validarComandaPorMesa.isEmpty()) {
                     mesaDao.eliminar(mesaBean)
                     eliminarMysql(mesaBean.id)
-                    bd.child("mesa").child(mesaBean.id.toString()).removeValue()
                 } else {
                     mostrarToast("No puedes eliminar mesas que tienen información de comandas")
                 }
@@ -116,7 +114,6 @@ class ActualizarMesas : AppCompatActivity() {
                     mesaBean.cantidadAsientos = cantidadAsientos
                     mesaDao.actualizar(mesaBean)
                     actualizarMesaMysql(mesaBean)
-                    bd.child("mesa").child(mesaBean.id.toString()).setValue(MesaNoSql(mesaBean.cantidadAsientos, mesaBean.estado))
                 }
             } else {
                 mostrarToast("No puedes actualizar una mesa ocupada")

@@ -12,7 +12,6 @@ import com.example.project_kotlin.dao.*
 import com.example.project_kotlin.db.ComandaDatabase
 import com.example.project_kotlin.entidades.*
 import com.example.project_kotlin.entidades.dto.*
-import com.example.project_kotlin.entidades.firebase.*
 import com.example.project_kotlin.service.ApiServiceComanda
 import com.example.project_kotlin.service.ApiServiceComprobante
 import com.example.project_kotlin.service.ApiServiceMesa
@@ -60,7 +59,6 @@ class FacturarActivity: AppCompatActivity() {
     private lateinit var cajaDao : CajaDao
     private lateinit var metodoPagoDao : MetodoPagoDao
     private lateinit var tipoComprobanteDao : TipoComprobanteDao
-    private lateinit var bdFirebase : DatabaseReference
     //ComandaGlobal
     //Llamando al objeto comandas con mesa, empleados y estadocomanda
     private lateinit var comandabean: ComandaMesaYEmpleadoYEstadoComanda
@@ -102,7 +100,6 @@ class FacturarActivity: AppCompatActivity() {
         detalleComandaDao = ComandaDatabase.obtenerBaseDatos(appConfig.CONTEXT).detalleComandaDao()
         apiComprobante = ApiUtils.getApiServiceComprobante()
         categoriaDao = ComandaDatabase.obtenerBaseDatos(appConfig.CONTEXT).categoriaPlatoDao()
-        conectar()
         //Comanda global
         comandabean = intent.getSerializableExtra("comandaFacturar") as ComandaMesaYEmpleadoYEstadoComanda
         lifecycleScope.launch(Dispatchers.IO) {
@@ -231,11 +228,8 @@ class FacturarActivity: AppCompatActivity() {
             //ACTUALIZAR MESA
             comandabean.comanda.comanda.mesa.estado = "Libre"
             actualizarMesaMysql(comandabean.comanda.comanda.mesa)
-            bdFirebase.child("mesa").child(comandabean.comanda.comanda.mesa.id.toString()).setValue(MesaNoSql(comandabean.comanda.comanda.mesa.cantidadAsientos,
-                comandabean.comanda.comanda.mesa.estado))
             //ACTUALIZAR COMANDA
             val detalleComandaDTOS : MutableList<DetalleComandaDTO> =  mutableListOf()
-            val detalleComandaNoSql : MutableList<DetalleComandaNoSql> =  mutableListOf()
             detalleComandaGlobal.forEach{detalleComanda ->
                 val categoriaPlato = categoriaDao.obtenerPorId(detalleComanda.plato.catplato_id)
                 //GUARDAR PARA MYSQL
@@ -246,12 +240,7 @@ class FacturarActivity: AppCompatActivity() {
                         precioUnitario = detalleComanda.detalle.precioUnitario, observacion = detalleComanda.detalle.observacion,
                         plato = platoDTO)
                 )
-                //GUARDAR PARA FIREBASE
-                detalleComandaNoSql.add(
-                    DetalleComandaNoSql(detalleComanda.detalle.cantidadPedido, detalleComanda.detalle.precioUnitario,
-                        detalleComanda.detalle.observacion, PlatoNoSql(platoDTO.nombre,platoDTO.imagen, platoDTO.precioPlato, CategoriaPlatoNoSql(categoria = categoriaPlato.categoria))
-                    )
-                )
+
             }
             val comandaRecibida = comandabean.comanda.comanda.comanda
             val empleado = empleadoDao.obtenerPorId(comandaRecibida.empleadoId.toLong())
@@ -260,40 +249,12 @@ class FacturarActivity: AppCompatActivity() {
             val comandaDTO = ComandaDTO(comandaId.toLong(), comandaRecibida.cantidadAsientos, subTOTAL, comandaRecibida.fechaRegistro,
             comandabean.comanda.comanda.mesa, comandabean.estadoComanda, empleadoDTO)
             comandaDTO.listaDetalleComanda = detalleComandaDTOS
-            //FIREBASE COMANDA
-            val empleadoNoSql : EmpleadoNoSql = EmpleadoNoSql(empleado.empleado.empleado.nombreEmpleado,empleado.empleado.empleado.apellidoEmpleado,
-                empleado.empleado.empleado.telefonoEmpleado, empleado.empleado.empleado.dniEmpleado, empleado.empleado.empleado.fechaRegistro,
-                UsuarioNoSql(empleado.usuario.correo), CargoNoSql(empleado.empleado.cargo.cargo)
-            )
-            val comandaNoSql : ComandaNoSql = ComandaNoSql(comandaRecibida.cantidadAsientos, comandaRecibida.precioTotal, fechaFormateada,
-                MesaNoSql(comandabean.comanda.comanda.mesa.cantidadAsientos, comandabean.comanda.comanda.mesa.estado), EstadoComandaNoSql("Pagada"), empleadoNoSql)
-            comandaNoSql.listaDetalleComanda = detalleComandaNoSql
-            bdFirebase.child("comanda").child(comandaRecibida.id.toString()).setValue(comandaNoSql)
             //GENERAR CDP MYSQL
             val comprobanteMySql = ComprobanteDTO(fechaEmision = fechaFormateada, precioTotalPedido = totalPagar, igv = igv, subTotal = subTOTAL,
             descuento = descuento!!, nombreCliente = clienteNombre, comanda = comandaDTO, empleado = empleadoDTO,
             caja = caja, metodopago = metodoPago, tipoComprobante = tipoComprobante)
             Log.d("COMPROBANTE", "" + comprobanteMySql)
             grabarComprobanteMySQL(comprobanteMySql)
-            //GENERAR CDP FIREBASE
-            val empleadoSESION = EmpleadoGlobal.empleado.empleado
-            val empleadoNoSqlFactura : EmpleadoNoSql = EmpleadoNoSql(empleadoSESION.nombreEmpleado,empleadoSESION.apellidoEmpleado, empleadoSESION.telefonoEmpleado, empleadoSESION.dniEmpleado, empleadoSESION.fechaRegistro,
-                UsuarioNoSql(EmpleadoGlobal.usuario.correo), CargoNoSql(EmpleadoGlobal.empleado.cargo.cargo)
-            )
-
-            val establecimientoNoSql = caja.establecimiento?.let {
-                EstablecimientoNoSql(
-                    it.nomEstablecimiento,
-                    it.telefonoestablecimiento,
-                    it.direccionestablecimiento,
-                    it.rucestablecimiento
-                )
-            }
-            val comprobanteNoSql = ComprobanteNoSql(fechaEmision = fechaFormateada, precioTotalPedido = totalPagar, igv = igv, subTotal = subTOTAL,
-                descuento = descuento!!, nombreCliente = clienteNombre, comanda = comandaNoSql, empleado = empleadoNoSqlFactura,
-                caja = CajaNoSql(establecimientoNoSql!!), metodoPago = MetodoPagoNoSql(metodoPago.nombreMetodoPago), tipoComprobante = TipoComprobanteNoSql(tipoComprobante.tipo))
-            bdFirebase.child("comprobante").child(idCDP.toString()).setValue(comprobanteNoSql)
-
             mostrarToast("Comprobante generado")
             cajaIntent()
 
@@ -344,10 +305,5 @@ class FacturarActivity: AppCompatActivity() {
         }
     }
 
-    fun conectar(){
-        //Iniciar firebase en la clase actual
-        FirebaseApp.initializeApp(this)
-        bdFirebase = FirebaseDatabase.getInstance().reference
-    }
 
 }

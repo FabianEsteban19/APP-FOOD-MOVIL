@@ -35,20 +35,4 @@ class Plato (
         }
     }
 
-data class PlatoConCategoria(
-    @Embedded val plato: Plato,
-    @Relation(
-        parentColumn = "catplato_id",
-        entityColumn = "id"
-    )
-    val categoriaPlato: CategoriaPlato
-):java.io.Serializable
 
-data class PlatosConComandas (
-    @Embedded val plato : Plato,
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "id_plato"
-    )
-    val comandas: List<DetalleComanda>
-)

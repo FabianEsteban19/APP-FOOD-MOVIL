@@ -13,7 +13,6 @@ import com.example.project_kotlin.R
 import com.example.project_kotlin.dao.MesaDao
 import com.example.project_kotlin.db.ComandaDatabase
 import com.example.project_kotlin.entidades.Mesa
-import com.example.project_kotlin.entidades.firebase.MesaNoSql
 import com.example.project_kotlin.service.ApiServiceMesa
 import com.example.project_kotlin.utils.ApiUtils
 import com.example.project_kotlin.utils.appConfig
@@ -33,8 +32,6 @@ class NuevaMesa : AppCompatActivity() {
     private lateinit var mesaDao: MesaDao
     private lateinit var apiMesa : ApiServiceMesa
 
-    //Variable para acceder a la base de datos creada en el proyecto en firebase
-    lateinit var bdFirebase : DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +44,6 @@ class NuevaMesa : AppCompatActivity() {
         edCantidadAsientos = findViewById(R.id.edtCanAsientosMesaA)
         btnVolverListadoMesa.setOnClickListener { volver() }
         btnAgregar.setOnClickListener { agregarMesa() }
-        conectar()
     }
 
     fun agregarMesa() {
@@ -61,8 +57,7 @@ class NuevaMesa : AppCompatActivity() {
 
                 //CREAR NODO RAIZ y nodo de tipo mesa
                 //Los doble signo de exclamación significa que estamos seguros que no será nulo
-                val beanNoSql = MesaNoSql(bean.cantidadAsientos, bean.estado)
-                bdFirebase.child("Mesa").child(mesaId.toString()).setValue(beanNoSql)
+
                 mostrarToast("Mesa agregada correctamente")
                 volver()
             }
@@ -78,6 +73,7 @@ class NuevaMesa : AppCompatActivity() {
             }
         })
     }
+
     //Ejemplo de cómo pueden validar sus campos en Kotlin
     fun validarCampos(): Boolean {
         val cantidad = edCantidadAsientos.text.toString().toIntOrNull()
@@ -99,9 +95,4 @@ class NuevaMesa : AppCompatActivity() {
         }
     }
 
-    fun conectar(){
-        //Iniciar firebase en la clase actual
-        FirebaseApp.initializeApp(this)
-        bdFirebase = FirebaseDatabase.getInstance().reference
-    }
 }

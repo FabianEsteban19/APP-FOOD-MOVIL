@@ -16,8 +16,6 @@ import com.example.project_kotlin.dao.CajaDao
 import com.example.project_kotlin.dao.EstablecimientoDao
 import com.example.project_kotlin.db.ComandaDatabase
 import com.example.project_kotlin.entidades.Caja
-import com.example.project_kotlin.entidades.firebase.CajaNoSql
-import com.example.project_kotlin.entidades.firebase.EstablecimientoNoSql
 import com.example.project_kotlin.service.ApiServiceCaja
 import com.example.project_kotlin.utils.ApiUtils
 
@@ -123,16 +121,6 @@ class NuevaCaja : AppCompatActivity() {
 
                 agregarCajaMySql(nuevaCaja)
 
-                // Guardar en Firebase
-                val establecimientoNoSql = EstablecimientoNoSql(
-                    establecimiento.nomEstablecimiento,
-                    establecimiento.telefonoestablecimiento,
-                    establecimiento.direccionestablecimiento,
-                    establecimiento.rucestablecimiento
-                )
-                val cajaNoSql = CajaNoSql(establecimientoNoSql)
-
-                bd.child("caja").child(nuevaCaja.id.toString()).setValue(cajaNoSql)
 
                 mostrarToast("Caja registrada")
                 volver()

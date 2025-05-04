@@ -12,7 +12,6 @@ import com.example.project_kotlin.R
 import com.example.project_kotlin.dao.EstablecimientoDao
 import com.example.project_kotlin.db.ComandaDatabase
 import com.example.project_kotlin.entidades.Establecimiento
-import com.example.project_kotlin.entidades.firebase.EstablecimientoNoSql
 import com.example.project_kotlin.service.ApiServiceEstablecimiento
 import com.example.project_kotlin.utils.ApiUtils
 import com.example.project_kotlin.utils.appConfig
@@ -93,16 +92,9 @@ class NuevoEstablecimiento:AppCompatActivity() {
                     direccionestablecimiento = direccion,
                     rucestablecimiento = ruc,
                     telefonoestablecimiento = telefono)
-                val establecimientoid=establecimientoDao.guardar(bean)
 
                 agregarEstablecimientoMySql(bean)
 
-                //CRto
-                val beanNoSql = EstablecimientoNoSql(bean.nomEstablecimiento,bean.telefonoestablecimiento,
-                    bean.direccionestablecimiento,bean.rucestablecimiento)
-                bd.child("establecimiento").child(establecimientoid.toString()).setValue(beanNoSql).addOnCompleteListener{
-                    mostrarToast("Establecimiento agregado correctamente")
-                }
 
                 volver()
 

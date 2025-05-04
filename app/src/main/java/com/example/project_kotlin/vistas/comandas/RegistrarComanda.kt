@@ -20,7 +20,6 @@ import com.example.project_kotlin.dao.*
 import com.example.project_kotlin.db.ComandaDatabase
 import com.example.project_kotlin.entidades.*
 import com.example.project_kotlin.entidades.dto.*
-import com.example.project_kotlin.entidades.firebase.*
 import com.example.project_kotlin.service.ApiServiceComanda
 import com.example.project_kotlin.utils.ApiUtils
 import com.example.project_kotlin.utils.VariablesGlobales
@@ -53,7 +52,6 @@ class RegistrarComanda : AppCompatActivity(), DetalleComandaAdapter.OnItemClickL
     private lateinit var rvDetalleComandaR : RecyclerView
     private lateinit var btnAniadirPlato : Button
     private lateinit var btnRegresarCR : Button
-    private lateinit var bdFirebase : DatabaseReference
     private lateinit var apiComanda : ApiServiceComanda
 
     //BASE DE DATOS
@@ -98,7 +96,6 @@ class RegistrarComanda : AppCompatActivity(), DetalleComandaAdapter.OnItemClickL
         apiComanda = ApiUtils.getApiServiceComanda()
         edtEmpleadoR.setText(EmpleadoGlobal.empleado.empleado.nombreEmpleado + " " + EmpleadoGlobal.empleado.empleado.apellidoEmpleado)
         cargarMesasLibres()
-        conectar()
     }
     fun generarComanda(){
         val numMesa = spnMesas.selectedItem.toString()
@@ -132,7 +129,6 @@ class RegistrarComanda : AppCompatActivity(), DetalleComandaAdapter.OnItemClickL
             val empleado = EmpleadoGlobal.empleado.empleado
             val empleadoDTO = EmpleadoDTO(empleado.id, empleado.nombreEmpleado, empleado.apellidoEmpleado, empleado.telefonoEmpleado,
             empleado.dniEmpleado, empleado.fechaRegistro, EmpleadoGlobal.usuario, EmpleadoGlobal.empleado.cargo)
-            val detalleComandaNoSql : MutableList<DetalleComandaNoSql> =  mutableListOf()
             val detalleComandaDTOS : MutableList<DetalleComandaDTO> =  mutableListOf()
             val comandaDTO = ComandaDTO(id = 0, cantidadAsientos = cantCli, precioTotal = sumaPrecio, mesa = mesaDTO,
             estadoComanda = EstadoComanda(1, "Libre"), fechaEmision = fechaFormateada, empleado = empleadoDTO)
@@ -150,24 +146,10 @@ class RegistrarComanda : AppCompatActivity(), DetalleComandaAdapter.OnItemClickL
                         precioUnitario = detalleComanda.detalle.precioUnitario, observacion = detalleComanda.detalle.observacion,
                         plato = platoDTO)
                 )
-                //GUARDAR PARA FIREBASE
-
-                detalleComandaNoSql.add(
-                    DetalleComandaNoSql(detalleComanda.detalle.cantidadPedido, detalleComanda.detalle.precioUnitario,
-                detalleComanda.detalle.observacion, PlatoNoSql(platoDTO.nombre,platoDTO.imagen, platoDTO.precioPlato, CategoriaPlatoNoSql(categoria = categoriaPlato.categoria))
-                    )
-                )
             }
             comandaDTO.listaDetalleComanda = detalleComandaDTOS
             grabarComandaMySql(comandaDTO)
-            //FIREBASE
-            val empleadoNoSql : EmpleadoNoSql = EmpleadoNoSql(empleado.nombreEmpleado,empleado.apellidoEmpleado, empleado.telefonoEmpleado, empleado.dniEmpleado, empleado.fechaRegistro,
-            UsuarioNoSql(EmpleadoGlobal.usuario.correo), CargoNoSql(EmpleadoGlobal.empleado.cargo.cargo)
-            )
-            val comandaNoSql : ComandaNoSql = ComandaNoSql(comandaAgregar.cantidadAsientos, comandaAgregar.precioTotal, fechaFormateada,
-            MesaNoSql(mesa.mesa.cantidadAsientos, mesa.mesa.estado), EstadoComandaNoSql("Generada"), empleadoNoSql)
-            comandaNoSql.listaDetalleComanda = detalleComandaNoSql
-            bdFirebase.child("comanda").child(idComanda.toString()).setValue(comandaNoSql)
+
             mostrarToast("Comanda agregada correctamente")
             volver()
         }
@@ -186,12 +168,6 @@ class RegistrarComanda : AppCompatActivity(), DetalleComandaAdapter.OnItemClickL
     fun volver(){
         var intent = Intent(this, ComandasVista::class.java)
         startActivity(intent)
-    }
-
-    fun conectar(){
-        //Iniciar firebase en la clase actual
-        FirebaseApp.initializeApp(this)
-        bdFirebase = FirebaseDatabase.getInstance().reference
     }
 
     //dialog Aniadir

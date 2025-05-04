@@ -19,8 +19,6 @@ import com.example.project_kotlin.db.ComandaDatabase
 import com.example.project_kotlin.entidades.*
 import com.example.project_kotlin.entidades.PlatoConCategoria
 import com.example.project_kotlin.entidades.dto.PlatoDTO
-import com.example.project_kotlin.entidades.firebase.CategoriaPlatoNoSql
-import com.example.project_kotlin.entidades.firebase.PlatoNoSql
 import com.example.project_kotlin.service.ApiServicePlato
 import com.example.project_kotlin.utils.ApiUtils
 import com.example.project_kotlin.utils.appConfig
@@ -51,9 +49,6 @@ class ActualizarPlato:AppCompatActivity() {
     //REST
     lateinit var apiPlato: ApiServicePlato
 
-    //FIREBASE
-    lateinit var bdFirebase: DatabaseReference
-
     private val PICK_IMAGE_REQUEST = 1
     private var imageData1: ByteArray? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,7 +73,6 @@ class ActualizarPlato:AppCompatActivity() {
         apiPlato = ApiUtils.getAPIServicePlato()
         platobean = intent.getSerializableExtra("plato") as PlatoConCategoria
         cargarCategoria()
-        conectar()
         btnEditar.setOnClickListener{actualizar()}
         btnEliminar.setOnClickListener{Eliminar()}
         btnCancelar.setOnClickListener{volver()}
@@ -133,9 +127,6 @@ class ActualizarPlato:AppCompatActivity() {
                platoDao.eliminar(platobean.plato)
                 eliminarPlatoMysql(platobean.plato.id)
 
-                val numero = platobean.plato.id.substringAfter('-').toInt()
-                val idCatPlato = numero.toString()
-                bdFirebase.child("plato").child(idCatPlato).removeValue()
                 mostrarToast("Plato eliminado correctamente")
                 volver()
 
@@ -178,11 +169,7 @@ class ActualizarPlato:AppCompatActivity() {
                     val platoDTO = PlatoDTO(platobean.plato.id, nombre, imageUrl, precio, platobean.categoriaPlato)
                     Log.e("Error al actualizar: ","" +platoDTO)
                     actualizarPlatoMysql(platoDTO)
-                    val numero = platobean.plato.id.substringAfter('-').toInt()
-                    val idCatPlato = numero.toString()
-                    val platoNoSql = PlatoNoSql(nombre,imageUrl, precio, CategoriaPlatoNoSql(platobean.categoriaPlato.categoria))
 
-                    bdFirebase.child("plato").child(idCatPlato).setValue(platoNoSql)
                     mostrarToast("Plato actualizada correctamente")
                     volver()
                 }
@@ -210,11 +197,7 @@ class ActualizarPlato:AppCompatActivity() {
                     val platoDTO = PlatoDTO(platobean.plato.id, nombre, platobean.plato.nombreImagen, precio, platobean.categoriaPlato)
                     Log.e("Error al actualizar: ","" +platoDTO)
                     actualizarPlatoMysql(platoDTO)
-                    val numero = platobean.plato.id.substringAfter('-').toInt()
-                    val idCatPlato = numero.toString()
-                    val platoNoSql = PlatoNoSql(nombre," ", precio, CategoriaPlatoNoSql(platobean.categoriaPlato.categoria))
 
-                    bdFirebase.child("plato").child(idCatPlato).setValue(platoNoSql)
                     mostrarToast("Plato actualizada correctamente")
                     volver()
                 }
@@ -303,10 +286,6 @@ class ActualizarPlato:AppCompatActivity() {
             }
         })
     }
-    fun conectar(){
-        //inicar mi firebase
-        FirebaseApp.initializeApp(this)
-        bdFirebase= FirebaseDatabase.getInstance().reference
-    }
+
 }
 

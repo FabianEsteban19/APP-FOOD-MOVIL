@@ -14,7 +14,6 @@ import com.example.project_kotlin.dao.CajaDao
 import com.example.project_kotlin.dao.EstablecimientoDao
 import com.example.project_kotlin.db.ComandaDatabase
 import com.example.project_kotlin.entidades.Establecimiento
-import com.example.project_kotlin.entidades.firebase.EstablecimientoNoSql
 import com.example.project_kotlin.service.ApiServiceEstablecimiento
 import com.example.project_kotlin.utils.ApiUtils
 import com.example.project_kotlin.utils.appConfig
@@ -56,7 +55,6 @@ class ActualizarEstablecimiento:AppCompatActivity() {
         setContentView(R.layout.modificar_establecimiento)
         establecimientoDao = ComandaDatabase.obtenerBaseDatos(appConfig.CONTEXT).establecimientoDao()
         cajaDao=ComandaDatabase.obtenerBaseDatos(appConfig.CONTEXT).cajaDao()
-        conectar()
         edtCod=findViewById(R.id.edtNomUsuE)
         edtNombre = findViewById(R.id.edtDireccion)
         edtDireccion = findViewById(R.id.edtDniUsuE)
@@ -96,9 +94,7 @@ class ActualizarEstablecimiento:AppCompatActivity() {
                     establecimientoDao.actualizar(establecimientoBean)
                     EditarMysql(establecimientoBean)
 
-                    val beanNoSql = EstablecimientoNoSql(establecimientoBean.nomEstablecimiento,establecimientoBean.telefonoestablecimiento,
-                        establecimientoBean.direccionestablecimiento,establecimientoBean.rucestablecimiento)
-                    bd.child("establecimiento").child(establecimientoBean.id.toString()).setValue(beanNoSql)
+
                     mostrarToast("Establecimiento actualizado correctamente")
                     Volver()
                 }
@@ -202,12 +198,7 @@ class ActualizarEstablecimiento:AppCompatActivity() {
             Toast.makeText(appConfig.CONTEXT, mensaje, Toast.LENGTH_SHORT).show()
         }
     }
-    fun conectar(){
 
-        //inicar mi firebase
-        FirebaseApp.initializeApp(this)
-        bd= FirebaseDatabase.getInstance().reference
-    }
 
 
 

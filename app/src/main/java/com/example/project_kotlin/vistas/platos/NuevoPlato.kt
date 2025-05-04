@@ -16,8 +16,6 @@ import com.example.project_kotlin.entidades.CategoriaPlato
 import com.example.project_kotlin.entidades.Plato
 import com.example.project_kotlin.entidades.PlatoConCategoria
 import com.example.project_kotlin.entidades.dto.PlatoDTO
-import com.example.project_kotlin.entidades.firebase.CategoriaPlatoNoSql
-import com.example.project_kotlin.entidades.firebase.PlatoNoSql
 import com.example.project_kotlin.service.ApiServicePlato
 import com.example.project_kotlin.utils.ApiUtils
 import com.example.project_kotlin.utils.appConfig
@@ -51,8 +49,6 @@ class NuevoPlato : AppCompatActivity() {
     //REST
     lateinit var apiPlato: ApiServicePlato
 
-    //FIREBASE
-    lateinit var bdFirebase: DatabaseReference
 
 
     //ADICIONALES
@@ -89,15 +85,9 @@ class NuevoPlato : AppCompatActivity() {
 
 
         btnCancelar.setOnClickListener({ Cancelar() })
-        conectar()
         cargarCategoria()
     }
 
-    fun conectar() {
-        //Iniciar firebase en la clase actual
-        FirebaseApp.initializeApp(this)
-        bdFirebase = FirebaseDatabase.getInstance().reference
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -147,14 +137,6 @@ class NuevoPlato : AppCompatActivity() {
                     // Guardar en Room
                     val plato = Plato(codigo, nombrep, precio, imageUrl, cat)
                     platoDao.guardar(plato)
-
-                    // Guardar en Firebase
-                    val numero = codigo.substringAfter('-').toInt()
-                    val idCatPlato = numero.toString()
-                    val categoriaPlatoNoSql = CategoriaPlatoNoSql(categoriaPlato.categoria)
-                    val platoNoSql = PlatoNoSql(nombrep, imageUrl, precio, categoriaPlatoNoSql)
-                    bdFirebase.child("plato").child(idCatPlato).setValue(platoNoSql)
-
                     mostrarToast("Plato agregado correctamente")
                     Cancelar()
                 } else {

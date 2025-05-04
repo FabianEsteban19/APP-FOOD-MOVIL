@@ -12,7 +12,6 @@ import com.example.project_kotlin.dao.MetodoPagoDao
 import com.example.project_kotlin.R
 import com.example.project_kotlin.db.ComandaDatabase
 import com.example.project_kotlin.entidades.MetodoPago
-import com.example.project_kotlin.entidades.firebase.MetodoPagoNoSql
 import com.example.project_kotlin.service.ApiServiceMetodoPago
 import com.example.project_kotlin.utils.ApiUtils
 import com.example.project_kotlin.utils.appConfig
@@ -73,12 +72,8 @@ class NuevoMetodoPago:AppCompatActivity() {
 
 
                 val bean = MetodoPago(nombreMetodoPago = nombre)
-                val metodoPagoId = metodoPagoDao.registrar(bean)
 
                 agregarMetodoPagoMySql(bean)
-
-                val beanNoSql = MetodoPagoNoSql(bean.nombreMetodoPago)
-                bd.child("metodopago").child(metodoPagoId.toString()).setValue(beanNoSql)
 
                 mostrarToast("Metodo de Pago agregado correctamente")
                 volver()

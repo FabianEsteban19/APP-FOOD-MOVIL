@@ -18,8 +18,6 @@ import com.example.project_kotlin.dao.EstablecimientoDao
 import com.example.project_kotlin.db.ComandaDatabase
 import com.example.project_kotlin.entidades.Caja
 import com.example.project_kotlin.entidades.Establecimiento
-import com.example.project_kotlin.entidades.firebase.CajaNoSql
-import com.example.project_kotlin.entidades.firebase.EstablecimientoNoSql
 import com.example.project_kotlin.service.ApiServiceCaja
 import com.example.project_kotlin.utils.ApiUtils
 
@@ -108,14 +106,6 @@ class ActualizarCajas  : AppCompatActivity(){
         return cajaExistente?.id ?: ""
     }
 
-    fun Establecimiento.toEstablecimientoNoSql(): EstablecimientoNoSql {
-        return EstablecimientoNoSql(
-            this.nomEstablecimiento,
-            this.telefonoestablecimiento,
-            this.direccionestablecimiento,
-            this.rucestablecimiento
-        )
-    }
 
 
 
@@ -133,9 +123,6 @@ class ActualizarCajas  : AppCompatActivity(){
                 CajaDao.actualizar(cajabean)
                 EditarMysql(cajabean)
 
-                val beanNoSql =
-                    CajaNoSql(establecimiento!!.toEstablecimientoNoSql())
-                bd.child("caja").child(cajabean.id).setValue(beanNoSql)
 
                 mostrarToast("Caja actualizada correctamente")
                 volver()

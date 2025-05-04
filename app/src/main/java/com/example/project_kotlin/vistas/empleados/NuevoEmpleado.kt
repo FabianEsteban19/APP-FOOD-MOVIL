@@ -17,9 +17,6 @@ import com.example.project_kotlin.entidades.Empleado
 import com.example.project_kotlin.entidades.Mesa
 import com.example.project_kotlin.entidades.Usuario
 import com.example.project_kotlin.entidades.dto.EmpleadoDTO
-import com.example.project_kotlin.entidades.firebase.CargoNoSql
-import com.example.project_kotlin.entidades.firebase.EmpleadoNoSql
-import com.example.project_kotlin.entidades.firebase.UsuarioNoSql
 import com.example.project_kotlin.service.ApiServiceEmpleado
 import com.example.project_kotlin.utils.ApiUtils
 import com.example.project_kotlin.utils.appConfig
@@ -51,8 +48,6 @@ class NuevoEmpleado:AppCompatActivity() {
     private lateinit var usuarioDao : UsuarioDao
     //REST
     lateinit var apiEmpleado : ApiServiceEmpleado
-    //Firebase
-    lateinit var bdFirebase : DatabaseReference
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,18 +72,14 @@ class NuevoEmpleado:AppCompatActivity() {
 
 
         cargarCargos()
-        conectar()
+
         btnNuevoUsu.setOnClickListener({nuevoUsuario()})
         btnCancelarUsu.setOnClickListener({volver()})
 
 
 
     }
-    fun conectar(){
-        //Iniciar firebase en la clase actual
-        FirebaseApp.initializeApp(this)
-        bdFirebase = FirebaseDatabase.getInstance().reference
-    }
+
     fun nuevoUsuario(){
         lifecycleScope.launch(Dispatchers.IO) {
             if(validarCampos()){
@@ -132,13 +123,6 @@ class NuevoEmpleado:AppCompatActivity() {
                     telefonoEmpleado = tel, fechaRegistro = fechaFormateada, cargo_id = cargo.id.toInt(), usuario_id = idUsuario.toInt())
 
                 val empleadoId = empleadoDao.guardar(empleado)
-                //GUARDAR EN FIREBASE
-                val cargoNoSql = CargoNoSql(cargo.cargo)
-                val usuNoSql = UsuarioNoSql(usuario.correo, usuario.contrasena)
-                val empleadoNoSql = EmpleadoNoSql(nombre, apellido, tel, dni, fechaFormateada, usuNoSql, cargoNoSql)
-                bdFirebase.child("empleado").child(empleadoId.toString()).setValue(empleadoNoSql)
-
-
 
                 mostrarToast("Empleado guardado correctamente")
                 volver()

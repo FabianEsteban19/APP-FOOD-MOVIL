@@ -12,9 +12,6 @@ import com.example.project_kotlin.dao.*
 import com.example.project_kotlin.db.ComandaDatabase
 import com.example.project_kotlin.entidades.*
 import com.example.project_kotlin.entidades.dto.EmpleadoDTO
-import com.example.project_kotlin.entidades.firebase.CargoNoSql
-import com.example.project_kotlin.entidades.firebase.EmpleadoNoSql
-import com.example.project_kotlin.entidades.firebase.UsuarioNoSql
 import com.example.project_kotlin.service.ApiServiceEmpleado
 import com.example.project_kotlin.utils.ApiUtils
 import com.example.project_kotlin.utils.VariablesGlobales
@@ -174,10 +171,7 @@ class ActualizarEmpleado : AppCompatActivity() {
 
                 val empleadoDTO = EmpleadoDTO(empleadoBean.empleado.empleado.id, nombre, apellido, tel, dni, empleadoBean.empleado.empleado.fechaRegistro, empleadoBean.usuario, empleadoBean.empleado.cargo)
                 actualizarEmpleadoMysql(empleadoDTO)
-                val usuarioNoSql = UsuarioNoSql(correo, empleadoBean.usuario.contrasena)
-                val empleadoNoSql = EmpleadoNoSql(nombre, apellido, tel, dni, empleadoBean.empleado.empleado.fechaRegistro,
-                    usuarioNoSql, CargoNoSql(empleadoBean.empleado.cargo.cargo))
-                bd.child("empleado").child(empleadoBean.empleado.empleado.id.toString()).setValue(empleadoNoSql)
+
                 mostrarToast("Empleado actualizado correctamente")
                 volver()
 

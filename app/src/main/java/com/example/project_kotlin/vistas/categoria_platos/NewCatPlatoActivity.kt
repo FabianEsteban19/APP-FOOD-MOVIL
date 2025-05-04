@@ -15,7 +15,6 @@ import com.example.project_kotlin.db.ComandaDatabase
 import com.example.project_kotlin.entidades.CategoriaPlato
 import com.example.project_kotlin.entidades.dto.CategoriaPlatoDTO
 import com.example.project_kotlin.entidades.dto.EmpleadoDTO
-import com.example.project_kotlin.entidades.firebase.CategoriaPlatoNoSql
 import com.example.project_kotlin.service.ApiServiceCategoriaPlato
 import com.example.project_kotlin.service.ApiServiceEmpleado
 import com.example.project_kotlin.utils.ApiUtils
@@ -41,8 +40,6 @@ class NewCatPlatoActivity: AppCompatActivity() {
 
     //REST
     lateinit var apiCategoria : ApiServiceCategoriaPlato
-    //Firebase
-    lateinit var bdFirebase : DatabaseReference
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,18 +53,11 @@ class NewCatPlatoActivity: AppCompatActivity() {
         btnCancelar = findViewById(R.id.btnCancelarCategoria)
         btnAgregar.setOnClickListener({AgregarCategoria()})
         btnCancelar.setOnClickListener({volverIndex()})
-        conectar()
     }
 
     fun Cancelar(){
         var intent= Intent(this, CategoriaPlatosActivity::class.java)
         startActivity(intent)
-    }
-
-    fun conectar(){
-        //Iniciar firebase en la clase actual
-        FirebaseApp.initializeApp(this)
-        bdFirebase = FirebaseDatabase.getInstance().reference
     }
 
 
@@ -88,11 +78,6 @@ class NewCatPlatoActivity: AppCompatActivity() {
                     val categoriaPlato = CategoriaPlato(id = codigo, categoria = nombre)
                     cateDao.guardar(categoriaPlato)
 
-                    //guardar en firebase
-                    val numero = codigo.substringAfter('-').toInt()
-                    val idCatPlato = numero.toString()
-                    val cateNoSqL = CategoriaPlatoNoSql(categoriaPlato.categoria)
-                    bdFirebase.child("categoria").child(idCatPlato).setValue(cateNoSqL)
 
                     mostrarToast("Categoría agregada correctamente")
                     volverIndex()

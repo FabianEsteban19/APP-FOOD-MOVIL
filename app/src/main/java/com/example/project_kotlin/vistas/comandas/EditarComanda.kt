@@ -24,7 +24,6 @@ import com.example.project_kotlin.entidades.dto.ComandaDTO
 import com.example.project_kotlin.entidades.dto.DetalleComandaDTO
 import com.example.project_kotlin.entidades.dto.EmpleadoDTO
 import com.example.project_kotlin.entidades.dto.PlatoDTO
-import com.example.project_kotlin.entidades.firebase.*
 import com.example.project_kotlin.service.ApiServiceComanda
 import com.example.project_kotlin.service.ApiServiceMesa
 import com.example.project_kotlin.utils.ApiUtils
@@ -53,7 +52,6 @@ class EditarComanda : AppCompatActivity(), DetalleComandaAdapter.OnItemClickList
     private lateinit var btnAniadirPlato: Button
     private lateinit var btnRegresarC: Button
     private lateinit var rvDetalleComanda: RecyclerView
-    private lateinit var bdFirebase: DatabaseReference
     private lateinit var spnCategoriaPlatoC:Spinner
     private lateinit var spnPlatoC:Spinner
     private lateinit var  btnAgregarPDetalle : Button
@@ -91,7 +89,7 @@ class EditarComanda : AppCompatActivity(), DetalleComandaAdapter.OnItemClickList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.actualizar_comanda_form)
-        conectar()
+
         edtNumMesa = findViewById(R.id.edtNumeroMesa)
         edtComensal = findViewById(R.id.edtComensal)
         edtEstadoComanda = findViewById(R.id.edtEstadoComanda)
@@ -175,7 +173,6 @@ class EditarComanda : AppCompatActivity(), DetalleComandaAdapter.OnItemClickList
                 val empleadoDTO = EmpleadoDTO(empleado.id, empleado.nombreEmpleado, empleado.apellidoEmpleado, empleado.telefonoEmpleado,
                     empleado.dniEmpleado, empleado.fechaRegistro, EmpleadoGlobal.usuario, EmpleadoGlobal.empleado.cargo)
                 val detalleComandaDTOS : MutableList<DetalleComandaDTO> =  mutableListOf()
-                val detalleComandaNoSql : MutableList<DetalleComandaNoSql> =  mutableListOf()
                 val comandaDTO = ComandaDTO(comandabean.comanda.comanda.comanda.id, cantidadAsientos = cantidadDePersonas, precioTotal = sumaPrecio, mesa = mesaDTO,
                     estadoComanda = EstadoComanda(1, "Generado"), fechaEmision = fechaFormateada, empleado = empleadoDTO)
                 detalleComandaGlobal.forEach { detalleComanda ->
@@ -191,10 +188,6 @@ class EditarComanda : AppCompatActivity(), DetalleComandaAdapter.OnItemClickList
                         if (detalleparaCambiar.detalle.id.toInt()!=0){
                             detalleComandaDTOS.add(DetalleComandaDTO(id=detalleComanda.detalle.id.toInt(), cantidadPedido = detalleComanda.detalle.cantidadPedido,
                                 precioUnitario = detalleComanda.detalle.precioUnitario, observacion = detalleComanda.detalle.observacion, plato = platoDTO))
-                            //GUARDAR PARA FIREBASE
-                            detalleComandaNoSql.add(DetalleComandaNoSql(cantidadPedido = detalleComanda.detalle.cantidadPedido, precioUnitario = detalleComanda.detalle.precioUnitario,
-                                observacion = detalleComanda.detalle.observacion, PlatoNoSql(platoDTO.nombre,platoDTO.imagen, platoDTO.precioPlato, CategoriaPlatoNoSql(categoria = categoriaPlato.categoria))
-                            ))
                             //bdFirebase.child("comanda").child(detalleComanda.detalle.id.toString()).setValue(detalleComandaNoSql)
                             detalleDao.actualizar(detalleComanda.detalle)
                         }
@@ -212,10 +205,7 @@ class EditarComanda : AppCompatActivity(), DetalleComandaAdapter.OnItemClickList
                                 precioUnitario = nuevoDetalleComanda.detalle.precioUnitario, observacion = nuevoDetalleComanda.detalle.observacion,
                                 plato = platoDTO)
                         )
-                        detalleComandaNoSql.add(
-                            DetalleComandaNoSql(cantidadPedido = nuevoDetalleComanda.detalle.cantidadPedido, precioUnitario = nuevoDetalleComanda.detalle.precioUnitario,
-                                observacion = nuevoDetalleComanda.detalle.observacion, PlatoNoSql(platoDTO.nombre,platoDTO.imagen, platoDTO.precioPlato, CategoriaPlatoNoSql(categoria = categoriaPlato.categoria))
-                            ))
+
                         // bdFirebase.child("comanda").child(nuevoDetalleComanda.detalle.id.toString()).setValue(detalleComandaNoSql)
                         detalleDao.guardar(nuevoDetalleComanda.detalle)
 
@@ -240,11 +230,10 @@ class EditarComanda : AppCompatActivity(), DetalleComandaAdapter.OnItemClickList
             lifecycleScope.launch(Dispatchers.IO) {
                 comandaDao.eliminar(comandabean.comanda.comanda.comanda)
                 EliminarMysql(comandabean.comanda.comanda.comanda.id)
-                bdFirebase.child("comanda").child(comandabean.comanda.comanda.comanda.id.toString()).removeValue()
+
                 comandabean.comanda.comanda.mesa.estado = "Libre"
                 mesaDao.actualizar(comandabean.comanda.comanda.mesa)
                 actualizarMesaMysql(comandabean.comanda.comanda.mesa)
-                bdFirebase.child("Mesa").child(comandabean.comanda.comanda.mesa.id.toString()).setValue(MesaNoSql(comandabean.comanda.comanda.mesa.cantidadAsientos, comandabean.comanda.comanda.mesa.estado))
                 mostrarToast("Comanda elimina correctamente")
                 volver()
             }
@@ -554,11 +543,6 @@ class EditarComanda : AppCompatActivity(), DetalleComandaAdapter.OnItemClickList
             dialog.dismiss()
         }
         dialog.show()
-    }
-    fun conectar(){
-        //inicar mi firebase
-        FirebaseApp.initializeApp(this)
-        bdFirebase= FirebaseDatabase.getInstance().reference
     }
 
 
