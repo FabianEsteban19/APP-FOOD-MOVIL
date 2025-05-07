@@ -1,0 +1,24 @@
+<!-- res/drawable/button_border.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <!-- Sombra negra detrás -->
+    <item android:left="2dp" android:top="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#80000000" /> <!-- Negro semi-transparente -->
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+
+    <!-- Botón principal encima -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#D85C27" /> <!-- Fondo blanco -->
+            <stroke
+                android:width="2dp"
+                android:color="#BA4F22" /> <!-- Borde naranja -->
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+
+</layer-list>

@@ -1,7 +1,6 @@
 package com.example.project_kotlin.vistas.empleados
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
@@ -14,15 +13,11 @@ import com.example.project_kotlin.dao.UsuarioDao
 import com.example.project_kotlin.db.ComandaDatabase
 import com.example.project_kotlin.entidades.Cargo
 import com.example.project_kotlin.entidades.Empleado
-import com.example.project_kotlin.entidades.Mesa
 import com.example.project_kotlin.entidades.Usuario
 import com.example.project_kotlin.entidades.dto.EmpleadoDTO
 import com.example.project_kotlin.service.ApiServiceEmpleado
 import com.example.project_kotlin.utils.ApiUtils
 import com.example.project_kotlin.utils.appConfig
-import com.google.firebase.FirebaseApp
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -86,9 +81,13 @@ class NuevoEmpleado:AppCompatActivity() {
                 val nombre = edtNomUsu.text.toString()
                 val apellido = edtApeUsu.text.toString()
                 val dni = edtDniUsu.text.toString()
-                val correo = edtCorreoUsu.text.toString()
+                val user = edtCorreoUsu.text.toString()
                 val tel = edtTelfUsu.text.toString()
-                val cargo = Cargo((spnCargo.selectedItemPosition +1).toLong(), spnCargo.selectedItem.toString())
+                val cargo = Cargo(
+                    (spnCargo.selectedItemPosition + 1).toLong().toString(),
+                    (spnCargo.selectedItem.toString()).toInt(),
+                    cargo = TODO()
+                )
                 val dateFormat = SimpleDateFormat("dd/MM/yyyy")
                 val fechaActual = Date()
                 val fechaFormateada = dateFormat.format(fechaActual)
@@ -96,7 +95,7 @@ class NuevoEmpleado:AppCompatActivity() {
                 val empleados = empleadoDao.obtenerTodo()
                 val telefonoRepetido = empleados.any{it.empleado.empleado.telefonoEmpleado == tel }
                 val dniRepetido = empleados.any{it.empleado.empleado.dniEmpleado == dni}
-                val correoRepetido = empleados.any{it.usuario.correo == correo }
+                val correoRepetido = empleados.any{it.usuario.usuario == user }
                 if(dniRepetido){
                     mostrarToast("El DNI ya existe en otro empleado")
                     return@launch
@@ -110,7 +109,8 @@ class NuevoEmpleado:AppCompatActivity() {
                     return@launch
                 }
                 //Crear objeto usuario
-                val usuario = Usuario(correo = correo)
+                val usuario = Usuario(usuario = user)
+                usuario.usuario = usuario.generarUsuario(nombre,dni)
                 usuario.contrasena = usuario.generarContrasenia(apellido)
                 //Crear objeto empleado DTO
                 val empleadoDTO = EmpleadoDTO(0, nombre, apellido, tel, dni, fechaFormateada, usuario, cargo)
@@ -120,7 +120,7 @@ class NuevoEmpleado:AppCompatActivity() {
                 usuario.id = idUsuario
 
                 val empleado = Empleado(nombreEmpleado = nombre, apellidoEmpleado = apellido, dniEmpleado = dni,
-                    telefonoEmpleado = tel, fechaRegistro = fechaFormateada, cargo_id = cargo.id.toInt(), usuario_id = idUsuario.toInt())
+                    telefonoEmpleado = tel, fechaRegistro = fechaFormateada, cargo_id = cargo.codCargo, usuario_id = idUsuario.toInt())
 
                 val empleadoId = empleadoDao.guardar(empleado)
 
@@ -180,6 +180,7 @@ class NuevoEmpleado:AppCompatActivity() {
 
         return true
     }
+
     fun volver(){
         var intent = Intent(this, DatosEmpleados::class.java)
         startActivity(intent)

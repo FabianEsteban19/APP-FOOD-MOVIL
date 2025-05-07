@@ -9,7 +9,7 @@ import java.util.*
     foreignKeys = [
         ForeignKey(
             entity = Cargo::class,
-            parentColumns = ["id"],
+            parentColumns = ["codCargo"],
             childColumns = ["cargo_id"]
         ),
         ForeignKey(
@@ -29,18 +29,16 @@ class Empleado(
     @NonNull @ColumnInfo(name="telefono") var telefonoEmpleado : String,
     @NonNull @ColumnInfo(name="dni") var dniEmpleado : String,
     @ColumnInfo(name = "fecha_registro", defaultValue = "CURRENT_TIMESTAMP") var fechaRegistro: String = "",
-    @ColumnInfo(name="cargo_id") var cargo_id : Int,
+    @ColumnInfo(name="cargo_id") var cargo_id : Int, // <- debe ser Long como codCargo
     @ColumnInfo(name="usuario_id") var usuario_id : Int,
+): java.io.Serializable
 
-    ):java.io.Serializable {
-
-}
 
 data class EmpleadoCargo(
     @Embedded val empleado: Empleado,
     @Relation(
         parentColumn = "cargo_id",
-        entityColumn = "id"
+        entityColumn = "codCargo"
     )
     val cargo: Cargo
 ):java.io.Serializable

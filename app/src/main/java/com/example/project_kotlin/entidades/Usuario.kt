@@ -7,7 +7,7 @@ import java.util.*
 @Entity(tableName = "usuario")
 data class Usuario (
     @PrimaryKey(autoGenerate = true) var id: Long? = null,
-    @ColumnInfo(name="correo") var correo: String? = null,
+    @ColumnInfo(name="usuario") var usuario: String? = null,
     @ColumnInfo(name="contraseña") var contrasena: String? = null):java.io.Serializable {
 
 
@@ -21,6 +21,18 @@ data class Usuario (
             caracterApe.substring(0, 1).uppercase(Locale.getDefault()) + caracterApe.substring(1)
         return mayusculaCaracterApe + "$" + utils.generarNumeroRandom(1000, 5000)
     }
+
+    //GenerarUsuario
+    fun generarUsuario(nombre: String, dni: String): String {
+        // Obtener los primeros 3 caracteres del nombre, o menos si es corto
+        val primerosTres = nombre.take(3).uppercase()
+
+        // Concatenar con el DNI completo
+        val usuarioGenerado = primerosTres + dni
+
+        return usuarioGenerado
+    }
+
 }
 
 

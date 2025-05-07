@@ -13,8 +13,7 @@ import androidx.room.*
         Index("establecimiento_id")
     ])
 data class Caja(
-    @PrimaryKey
-    var id: String = ""
+    @PrimaryKey var id: String = ""
 ) :java.io.Serializable{
     @Embedded(prefix = "establecimiento_")
     var establecimiento: Establecimiento? = null

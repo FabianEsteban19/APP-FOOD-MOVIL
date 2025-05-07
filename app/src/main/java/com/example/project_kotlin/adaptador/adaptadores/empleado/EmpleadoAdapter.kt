@@ -26,7 +26,7 @@ class EmpleadoAdapter(var info:List<EmpleadoUsuarioYCargo>):RecyclerView.Adapter
         holder.tvApeUsu.text =  info.get(position).empleado.empleado.apellidoEmpleado
         holder.tvDniUsu.text = info.get(position).empleado.empleado.dniEmpleado
         holder.tvNomUsu.text = info.get(position).empleado.empleado.nombreEmpleado
-        holder.tvCorreoUsu.text = info.get(position).usuario.correo
+        holder.tvCorreoUsu.text = info.get(position).usuario.usuario
         holder.tvCargoUsu.text = info.get(position).empleado.cargo.cargo
         holder.tvTelfUsu.text = info.get(position).empleado.empleado.telefonoEmpleado
         holder.tvFechaUsu.text = info.get(position).empleado.empleado.fechaRegistro

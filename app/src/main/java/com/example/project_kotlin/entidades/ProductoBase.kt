@@ -4,9 +4,9 @@ import androidx.annotation.NonNull
 import androidx.room.*
 import java.util.UUID
 
-@Entity(tableName = "Producto_Base")
-class ProductoBase(
-    @PrimaryKey var id: UUID = UUID.randomUUID(),
+@Entity(tableName = "producto_Base")
+data class ProductoBase(
+    @PrimaryKey @ColumnInfo(name = "producto_base_id") var id: UUID = UUID.randomUUID(),
     @NonNull @ColumnInfo(name = "cod_prodBase") var codProdBase: String,
     @NonNull @ColumnInfo(name = "nom_prodBase") var nomProdBase: String,
     @NonNull @ColumnInfo(name = "stock") var stock: Int,

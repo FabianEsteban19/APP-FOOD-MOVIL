@@ -90,7 +90,7 @@ class ActualizarEmpleado : AppCompatActivity() {
         edtNomUsu.setText(empleadoBean.empleado.empleado.nombreEmpleado)
         edtApeUsu.setText(empleadoBean.empleado.empleado.apellidoEmpleado)
         edtDniUsu.setText(empleadoBean.empleado.empleado.dniEmpleado)
-        edtCorreoUsu.setText(empleadoBean.usuario.correo)
+        edtCorreoUsu.setText(empleadoBean.usuario.usuario)
         edtTelfUsu.setText(empleadoBean.empleado.empleado.telefonoEmpleado)
         spnCargo.setSelection(empleadoBean.empleado.cargo.id.toInt()-1)
 
@@ -139,14 +139,14 @@ class ActualizarEmpleado : AppCompatActivity() {
                 val nombre = edtNomUsu.text.toString()
                 val apellido = edtApeUsu.text.toString()
                 val dni = edtDniUsu.text.toString()
-                val correo = edtCorreoUsu.text.toString()
+                val user = edtCorreoUsu.text.toString()
                 val tel = edtTelfUsu.text.toString()
                 val cargo = spnCargo.selectedItemPosition +1
                 //AQUÍ TENDRÍA QUE VALIDAR QUE EL USUARIO NO PUEDA MODIFICAR SU CARGO
                 val empleados = empleadoDao.obtenerTodo()
                 val telefonoRepetido = empleados.any{it.empleado.empleado.telefonoEmpleado == tel && it.empleado.empleado.id != empleadoBean.empleado.empleado.id}
                 val dniRepetido = empleados.any{it.empleado.empleado.dniEmpleado == dni && it.empleado.empleado.id != empleadoBean.empleado.empleado.id}
-                val correoRepetido = empleados.any{it.usuario.correo == correo && it.empleado.empleado.id != empleadoBean.empleado.empleado.id}
+                val correoRepetido = empleados.any{it.usuario.usuario == user && it.empleado.empleado.id != empleadoBean.empleado.empleado.id}
                 if(dniRepetido){
                     mostrarToast("El DNI ya existe en otro empleado")
                     return@launch
@@ -162,9 +162,8 @@ class ActualizarEmpleado : AppCompatActivity() {
                 empleadoBean.empleado.empleado.nombreEmpleado = nombre
                 empleadoBean.empleado.empleado.apellidoEmpleado = apellido
                 empleadoBean.empleado.empleado.dniEmpleado = dni
-                empleadoBean.usuario.correo = correo
+                empleadoBean.usuario.usuario = user
                 empleadoBean.empleado.empleado.telefonoEmpleado = tel
-                empleadoBean.empleado.cargo.id = cargo.toLong()
                 empleadoBean.empleado.cargo.cargo = spnCargo.selectedItem.toString()
                 usuarioDao.actualizar(empleadoBean.usuario)
                 empleadoDao.actualizar(empleadoBean.empleado.empleado)

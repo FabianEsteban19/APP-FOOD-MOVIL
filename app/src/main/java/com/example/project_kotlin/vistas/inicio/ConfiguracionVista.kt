@@ -47,7 +47,7 @@ class ConfiguracionVista:AppCompatActivity() {
         cvEstablecimiento.setOnClickListener({vincularEstablecimiento()})
         cvCajas.setOnClickListener({vincularCajaVista()})
         cvMetodoPago.setOnClickListener({vincularMetodoPago()})
-        cvRegresarINdex.setOnClickListener({vincularREgresoIndex()})
+        cvRegresarINdex.setOnClickListener({vincularRegresoIndex()})
 
 
     }
@@ -66,7 +66,6 @@ class ConfiguracionVista:AppCompatActivity() {
 
     }
 
-    //VISTA MESA --PARTE DE FABIAN
     fun vincularMesas() {
 
         var intent = Intent(appConfig.CONTEXT, DatosMesas::class.java)
@@ -74,7 +73,6 @@ class ConfiguracionVista:AppCompatActivity() {
 
     }
 
-    //falta
     fun vincularCategoriaPlatos() {
 
         var intent = Intent(this, CategoriaPlatosActivity::class.java)
@@ -82,7 +80,6 @@ class ConfiguracionVista:AppCompatActivity() {
 
     }
 
-    //falta
     fun vincularEstablecimiento() {
 
         var intent = Intent(this, DatosEstablecimiento::class.java)
@@ -90,7 +87,6 @@ class ConfiguracionVista:AppCompatActivity() {
 
     }
 
-    //falta
     fun vincularMetodoPago(){
 
         var intent = Intent(this, DatosMetodoPago::class.java)
@@ -105,7 +101,7 @@ class ConfiguracionVista:AppCompatActivity() {
 
     }
 
-    fun vincularREgresoIndex() {
+    fun vincularRegresoIndex() {
 
         var intent = Intent(this, IndexComandasActivity::class.java)
         startActivity(intent)

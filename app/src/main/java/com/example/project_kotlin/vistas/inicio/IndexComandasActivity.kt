@@ -52,7 +52,7 @@ class IndexComandasActivity : AppCompatActivity() {
     }
 
     fun vincularConfig(){
-        if(VariablesGlobales.empleado?.empleado?.cargo?.id == 1.toLong()){
+        if(VariablesGlobales.empleado?.empleado?.cargo?.codCargo == 1){
             var intent = Intent(this, ConfiguracionVista::class.java)
             startActivity(intent)
         }else{
@@ -66,7 +66,7 @@ class IndexComandasActivity : AppCompatActivity() {
 
     //PEDIDOS FALTA
     fun vincularComandas(){
-        if(VariablesGlobales.empleado?.empleado?.cargo?.id != 3.toLong()){
+        if(VariablesGlobales.empleado?.empleado?.cargo?.codCargo != 3){
             var intent = Intent(this, ComandasVista::class.java)
             startActivity(intent)
         }else{

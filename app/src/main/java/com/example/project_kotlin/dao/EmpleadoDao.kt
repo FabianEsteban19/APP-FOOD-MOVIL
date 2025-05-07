@@ -16,7 +16,7 @@ interface EmpleadoDao {
     fun obtenerTodo(): List<EmpleadoUsuarioYCargo>
 
     @Query("select * from Empleado where cargo_id = :cargo_id")
-    fun buscarPorCargo(cargo_id: String): List<EmpleadoUsuarioYCargo>
+    fun buscarPorCargo(cargo_id: Int): List<EmpleadoUsuarioYCargo>
 
     @Query("SELECT * FROM Empleado WHERE id = :id")
     fun obtenerPorId(id: Long) : EmpleadoUsuarioYCargo

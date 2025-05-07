@@ -19,6 +19,9 @@ import java.util.*
         Comprobante::class, Usuario::class,
         CategoriaPlato::class, Mesa::class,
         DetalleComanda::class,
+        ProductoBase::class,
+        RecetaPlato::class,
+        MovimientoInventario::class,
         Empleado::class, Plato::class, Establecimiento::class,
         EstadoComanda::class, MetodoPago::class, TipoComprobante::class],
     version = 1,
@@ -71,19 +74,15 @@ abstract class ComandaDatabase : RoomDatabase() {
                             val cargoDao = obtenerBaseDatos(context).cargoDao()
 
                             //Agregando cargos
-                            cargoDao.guardar(Cargo(cargo= "ADMINISTRADOR"))
-                            cargoDao.guardar(Cargo(cargo = "MESERO"))
-                            cargoDao.guardar(Cargo(cargo= "CAJERO"))
-                            cargoDao.guardar(Cargo(cargo= "COCINA"))
-                            /*bdFirebase.child("cargo").child("1").setValue(CargoNoSql("ADMINISTRADOR"))
-                            bdFirebase.child("cargo").child("2").setValue(CargoNoSql("MESERO"))
-                            bdFirebase.child("cargo").child("3").setValue(CargoNoSql("CAJERO"))
-                            bdFirebase.child("cargo").child("4").setValue(CargoNoSql("GERENTE"))*/
+                            cargoDao.guardar(Cargo(codCargo = 1,cargo = "ADMINISTRADOR"))
+                            cargoDao.guardar(Cargo(codCargo = 2,cargo = "MESERO"))
+                            cargoDao.guardar(Cargo(codCargo = 3,cargo= "CAJERO"))
+                            cargoDao.guardar(Cargo(codCargo = 4,cargo= "COCINA"))
 
                             //Agregando estados
                             estadosComandaDao?.guardar(EstadoComanda(estadoComanda ="Creada"))
+                            estadosComandaDao?.guardar(EstadoComanda(estadoComanda= "Gestionada"))
                             estadosComandaDao?.guardar(EstadoComanda(estadoComanda ="Confirmada"))
-                            estadosComandaDao?.guardar(EstadoComanda(estadoComanda= "Pendiente"))
                             estadosComandaDao?.guardar(EstadoComanda(estadoComanda= "Pagada"))
 
                             //Métodos de pago
@@ -115,7 +114,7 @@ abstract class ComandaDatabase : RoomDatabase() {
                             val fechaFormateada = dateFormat.format(fechaActual)
 
                             //CREAR EMPLEADOS
-                            val usuario = Usuario(correo= "jaeg2025@burgerHouse.com", contrasena = "jose2025")
+                            val usuario = Usuario(usuario = "JOS10166573", contrasena = "jose2025")
                             usuarioDao?.guardar(usuario)
                             val empleado = Empleado(nombreEmpleado = "Jose", apellidoEmpleado = "Antonio", telefonoEmpleado = "991058757",
                                     dniEmpleado = "10166573", fechaRegistro = fechaFormateada, cargo_id = 1, usuario_id = 1)

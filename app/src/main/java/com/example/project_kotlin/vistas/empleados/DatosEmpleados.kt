@@ -96,7 +96,7 @@ class DatosEmpleados: AppCompatActivity() {
             var datos = empleadoDao.obtenerTodo()
             var datosFiltrados : List<EmpleadoUsuarioYCargo> = datos
             if(idCargo.toInt() != 0){
-                datosFiltrados = datosFiltrados.filter { empleado -> empleado.empleado.cargo.id == idCargo}
+                datosFiltrados = datosFiltrados.filter { empleado -> empleado.empleado.cargo.codCargo == idCargo.toInt() }
             }
 
             if(!fecha.isNullOrEmpty()){
